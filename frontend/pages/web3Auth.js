@@ -12,13 +12,16 @@ global.Buffer = global.Buffer || Buffer;
 
 const scheme = "com.buurp";
 
+
 const resolvedRedirectUrl =
   Constants.appOwnership == AppOwnership.Expo || Constants.appOwnership == AppOwnership.Guest
     ? Linking.createURL("auth", {})
     : Linking.createURL("auth", { scheme: scheme });
 
+    console.log('resolvedRedirectUrl', resolvedRedirectUrl)
+
 const REQUEST = {
-  clientId: "BMiUphwanlsWbNylYsUB8_jIX9klzgNEJk2oTUauTZDTyQJsuZxH1U8LkF31Hl7maIlJeq6I6qdK-wiuLGCVP5Y",
+  clientId: "BJMlrj_lhjOUUcRjpntWMbD_HTaHxrlaA4Ck5oG1Rru00sn5yrA3Y0Osq0ybr-9tKLHANIAWEzz1V9MeS11bCQI",
   network: OPENLOGIN_NETWORK.TESTNET,
   whiteLabel: {
     name: "Buurp",
@@ -173,9 +176,9 @@ export const Web3AuthScreen = ({ }) => {
             <Text style={{ textAlign: 'center', color: '#bbb' }}>Continue with Email</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.input} onPress={testLogin}>
+          {/* <TouchableOpacity style={styles.input} onPress={testLogin}>
             <Text style={{ textAlign: 'center', color: '#bbb' }}>Test Login</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={{ textAlign: 'center', color: '#333', marginTop: 12 }}>Back</Text>

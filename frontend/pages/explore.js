@@ -5,27 +5,36 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import CustomNavbar from "../Components/CustomNavbar";
 import Carousel from 'react-native-snap-carousel';
 import useNativeBalance from '../hooks/useNativeBalance';
-import { useMoralis, useMoralisWeb3Api } from "react-moralis";
+import { useMoralis, useMoralisQuery, useMoralisWeb3Api } from "react-moralis";
 import { useMoralisDapp } from "../providers/MoralisDappProvider/MoralisDappProvider";
-import UtilService from "../utils/utilService";
+import moment from "moment";
 import { useWalletConnect } from "../WalletConnect";
+import UtilService from "../utils/utilService";
 const screenWidth = Dimensions.get('window').width;
 
-const ExploreScreen = ({ navigation }) => {
+const ExploreScreen = ({ navigation, route }) => {
 
   const ref = useRef();
-  const { Moralis, isInitialized, authenticate } = useMoralis();
+  const { user, isInitialized, authenticate } = useMoralis();
   const screenWidth = Dimensions.get('window').width;
   const balance = useNativeBalance();
   const { walletAddress, chainId } = useMoralisDapp();
   // const ethAddress = Moralis.User.current().get('ethAddress');
+  const { data: ScannedData, fetch } = useMoralisQuery("ScannedList", query => query.equalTo("account", user.id).descending("createdAt"), [trigger]);
 
   const Web3Api = useMoralisWeb3Api();
   const [nfts, setNFTs] = useState([]);
+  const [trigger, setTrigger] = useState(1);
   const [transactions, setTransactions] = useState([]);
   const connector = useWalletConnect();
 
-  const noToken = balance?.nativeBalance === "NaN ETH" || balance?.nativeBalance === "0 ETH"
+  const noToken = balance?.nativeBalance === "NaN ETH" || balance?.nativeBalance === "0 ETH";
+
+
+  useEffect(() => {
+    setTrigger(route?.params?.t)
+    fetch();
+  }, [route?.params?.t])
 
   useEffect(() => {
     if (isInitialized) {
@@ -82,10 +91,7 @@ const ExploreScreen = ({ navigation }) => {
             </View>
             <View style={{ flex: 1, marginLeft: 12 }}>
               <TouchableOpacity
-                onPress={() => authenticate({
-                  connector,
-                  signingMessage: "Buurp",
-                })}
+                onPress={() => navigation.navigate('Share')}
                 style={{ backgroundColor: '#F9699A', padding: 12, borderRadius: 20, alignItems: 'center', marginVertical: 12 }}>
                 <Text>Scan Tokens</Text>
               </TouchableOpacity>
@@ -101,21 +107,21 @@ const ExploreScreen = ({ navigation }) => {
           <View style={styles.redeem}>
             <Text style={{ fontSize: 20, fontWeight: '700', color: '#cacaca' }}>Redeemed Last</Text>
 
-            {transactions.map((item, index) => <View key={index} style={{ padding: 3, marginTop: 4 }}>
+            {ScannedData.map((item, index) => <View key={index} style={{ padding: 3, marginTop: 4 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <MaterialCommunityIcons name="wallet" size={24} color={walletAddress === item.from_address ? "#F9699A" : '#22DBBB'} />
+                <MaterialCommunityIcons name="wallet" size={24} color={"#F9699A"} />
                 <View style={{ marginLeft: 10, flex: 1 }}>
                   <Text style={{ color: '#22DBBB', fontWeight: '400', fontSize: 13 }}>
                     {/* {walletAddress === item.from_address ? 'Redeemed' : 'Collected'} */}
-                    {item.block_timestamp?.replace('T', ' ')?.replace('.000Z', '')}
+                    {/* {item.attributes.createdAt?.replace('T', ' ')?.replace('.000Z', '')} */}
+                    { moment(item.attributes.createdAt).format('L, LT')}
                   </Text>
                   <Text style={{ color: '#AEAEAE', fontSize: 11 }}>
-                    {walletAddress === item.from_address ? 'Me' : UtilService.truncate2(item.from_address)}
-                    &nbsp; to &nbsp;
-                    {walletAddress === item.to_address ? 'Me' : UtilService.truncate2(item.to_address)}
+                    {/* {item.attributes.name} */}
+                    {UtilService.truncate2(item.attributes.token_id)}
                   </Text>
                 </View>
-                <Image source={{ uri: item.image }} style={{ width: 30, height: 40 }} />
+                <Image source={{ uri: item.attributes.image }} style={{ width: 30, height: 40 }} />
               </View>
             </View>)}
           </View>

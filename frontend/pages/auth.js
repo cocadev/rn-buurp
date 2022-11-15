@@ -85,7 +85,7 @@ const AuthScreen = () => {
             style={[styles.button, { marginTop: 8, backgroundColor: '#fff' }]}
             onPress={() => navigation.navigate("Web3Auth")}
           >
-            <Text style={{ color: '#000', fontSize: 16 }}>Login</Text>
+            <Text style={{ color: '#000', fontSize: 16 }}>Login Without Wallet</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={[styles.button, { backgroundColor: '#F9699A' }]} onPress={()=>setIsWallet(true)}>

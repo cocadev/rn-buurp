@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
 import { StyleSheet, Dimensions, TouchableOpacity, View, Text, ScrollView, Image } from "react-native";
 import CustomHeader from "../Components/CustomHeader";
 import CustomNavbar from "../Components/CustomNavbar";
-
-const screenWidth = Dimensions.get('window').width;
+import { useToast } from "react-native-toast-notifications";
+import ModalTransaction from '../Components/ModalTransaction';
 
 const ShareScreen = ({ navigation }) => {
+
+  const { Moralis, account, user } = useMoralis();
+  const toast = useToast();
+  const [isModal, setIsModal] = useState(false);
+  const [modalData, setModalData] = useState(false);
 
   return (
     <View style={styles.root}>
@@ -15,11 +20,31 @@ const ShareScreen = ({ navigation }) => {
 
         <CustomHeader navigation={navigation} title={'My Tokens'} />
 
-        <TouchableOpacity style={[styles.button, { backgroundColor: '#727375' }]}
-          onPress={() => navigation.navigate('Scanning', { onScanCode: (e) => {
+        <TouchableOpacity style={[styles.button, { backgroundColor: 'transparent' }]}
+          onPress={() => navigation.navigate('Scanning', { onScanCode: async(e) => {
+
+            setIsModal(true);
+            setModalData(null);
+
+            const { token_address, token_id, username } = JSON.parse(e);
+
+            const ScannedListQuery = new Moralis.Query('ScannedList');
+            ScannedListQuery.equalTo('token_id', token_id).equalTo('address', token_address).equalTo('account', user.id);
+            const object = await ScannedListQuery.first();
+
+            setModalData(object ? 'error' : e);
+
+            // if(object){
+            //   toast.show("Already scanned!");
+            //   return false;
+
+            // }else{
+            //   navigation.navigate('ConfirmRedeem', {data: e})
+              
+            // }
+
             // navigation.goBack();
             // route.params.onScanCode(e);
-            navigation.navigate('ConfirmRedeem', {data: e})
           }})}>
           <Text style={{ color: '#fff', fontSize: 16 }}>Scan Customer Token</Text>
         </TouchableOpacity>
@@ -30,6 +55,14 @@ const ShareScreen = ({ navigation }) => {
 
       <CustomNavbar />
 
+      {isModal && <ModalTransaction 
+        data={modalData}
+        onClose={()=>{
+          setIsModal(false);
+          navigation.goBack();
+        }}
+      />}
+
     </View>
   );
 };
@@ -38,6 +71,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     width: '100%',
+    backgroundColor: '#902a4d'
   },
   button: {
     justifyContent: 'center',

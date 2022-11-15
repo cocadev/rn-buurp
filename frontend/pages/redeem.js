@@ -32,7 +32,6 @@ const RedeemScreen = ({ navigation, route }) => {
           </View>
         </View>
 
-
         <View>
           <Text style={styles.t1}>Staff Scan to Redeeem</Text>
           <Text style={styles.t2}>
@@ -64,6 +63,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     width: '100%',
+    backgroundColor: '#902a4d'
   },
   row: {
     flexDirection: 'row',

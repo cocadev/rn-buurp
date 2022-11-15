@@ -19,8 +19,8 @@ export default function CustomNavbar() {
         <Entypo name="shop" size={28} color={route.name === 'Marketplace' ? '#22DBBB' : "#555"} />
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('ReceiveToken')}>
-        <MaterialCommunityIcons name="qrcode-scan" size={28} color={(route.name === 'ReceiveToken' || route.name === 'ReceiveToken') ? '#22DBBB' : "#555"}/>
+      <TouchableOpacity onPress={() => navigation.navigate('Share')}>
+        <MaterialCommunityIcons name="qrcode-scan" size={28} color={(route.name === 'Share' || route.name === 'ReceiveToken') ? '#22DBBB' : "#555"}/>
       </TouchableOpacity>
       
       <TouchableOpacity onPress={() => navigation.navigate('Home')}>

@@ -52,8 +52,8 @@ export const Providers = ({ children }: ProvidersProps) => {
   return (
     <WalletConnectProvider {...walletConnectOptions}>
       <MoralisProvider
-        appId={'4HBtq9v6DIZjsh6nR3Fzj9ScVPPWHQ6raZwCFd5F'}
-        serverUrl={'https://qkdgyskkax75.grandmoralis.com:2053/server'}
+        appId={'v9vAY6giv9KAzIKDI1fRb0E595G6obDAJFwh3vbc'}
+        serverUrl={'https://tazxklodomuv.grandmoralis.com:2053/server'}
       environment={environment}
       >
         <MoralisDappProvider>

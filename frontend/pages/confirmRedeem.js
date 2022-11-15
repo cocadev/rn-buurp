@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions, TouchableOpacity, View, Text, ScrollView, Image
 import CustomHeader from "../Components/CustomHeader";
 import CustomNavbar from "../Components/CustomNavbar";
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useMoralisWeb3Api } from "react-moralis";
+import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import UtilService from "../utils/utilService";
 
 const screenWidth = Dimensions.get('window').width;
@@ -12,6 +12,7 @@ const ConfirmRedeemScreen = ({ navigation, route }) => {
 
   const { data } = route.params;
   const Web3Api = useMoralisWeb3Api();
+  const { Moralis, account, user } = useMoralis();
 
   const [image, setImage] = useState();
   const [name, setName] = useState();
@@ -32,13 +33,36 @@ const ConfirmRedeemScreen = ({ navigation, route }) => {
     })
 
     const metadata = JSON.parse(meta.metadata)
-    const { image, name, description } = metadata;
+    const { image, name, description,  } = metadata;
 
     setImage(image);
     setName(name);
     setDescription(description);
     // setOwner(meta.owner_of)
-    setOwner(username)
+    setOwner(username || UtilService.truncate(meta.owner_of))
+  }
+
+  const onConfirm = async() => {
+
+    const { token_address, token_id, username } = JSON.parse(data);
+
+    const ScannedList = Moralis.Object.extend("ScannedList");
+    const scannedList = new ScannedList();
+
+    scannedList.save({
+      account: user.id,
+      date: new Date(),
+      chain: '0x5',
+      address: token_address,
+      token_id: token_id,
+      image, name, description, 
+      username: owner
+    });
+
+    setTimeout(() => {
+      navigation.navigate('Home', {t: token_address + token_id})
+    }, 3000)
+
   }
 
   return (
@@ -67,11 +91,15 @@ const ConfirmRedeemScreen = ({ navigation, route }) => {
 
           <TouchableOpacity
             style={[styles.button, { backgroundColor: '#363738' }]}
+            onPress={()=>onConfirm()}
           >
             <Text style={{ color: '#fff', fontSize: 16 }}>Confirm & Redeem</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={{ marginTop: 12 }}>
+          <TouchableOpacity 
+            style={{ marginTop: 12 }}
+            onPress={()=>navigation.navigate('Home')}
+          >
             <Text style={{ fontSize: 16, color: '#6E6E6E', textAlign: 'center' }}>Cancel</Text>
           </TouchableOpacity>
         </View>

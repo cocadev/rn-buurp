@@ -21,6 +21,8 @@ const EditProfileScreen = ({ navigation }) => {
   const [country, setCountry] = useState('United Kingdom');
   const [number, setNumber] = useState('');
   const [phoneCode, setPhoneCode] = useState('GB');
+  const [venue, setVenue] = useState('');
+  
   const [fileAvatar, setFileAvatar] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [isModalProfile, setIsModalProfile] = useState(false);
@@ -33,9 +35,9 @@ const EditProfileScreen = ({ navigation }) => {
   // console.log('title', title)
   // console.log('email', email)
   // console.log('country', country)
-  // console.log('fileAvatar', fileAvatar)
+  // console.log('venue', venue)
   // console.log('number', number)
-  const isEnabledSave = title && email && country && fileAvatar && number;
+  const isEnabledSave = title && email && country && number && venue;
 
   useEffect(() => {
     if (user) {
@@ -45,6 +47,7 @@ const EditProfileScreen = ({ navigation }) => {
       setCountry(user?.attributes?.country || 'United Kingdom')
       setNumber(user?.attributes?.number)
       setPhoneCode(user?.attributes?.phoneCode || 'GB');
+      setVenue(user?.attributes?.venue);
       setLoaded(true);
     }
   }, [user])
@@ -90,7 +93,6 @@ const EditProfileScreen = ({ navigation }) => {
   };
 
   const takePicture = async () => {
-    console.log('there!')
 
     let res = await Permissions.askAsync(Permissions.CAMERA)
     if (res.status === 'granted') {
@@ -112,7 +114,6 @@ const EditProfileScreen = ({ navigation }) => {
   }
 
   const pickImage = async () => {
-    console.log('here!')
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -146,20 +147,19 @@ const EditProfileScreen = ({ navigation }) => {
         </TouchableOpacity>}
 
       <View style={styles.viewContainer}>
-        {/* <Text style={{ color: '#000', fontSize: 25, fontWeight: '700' }}>{'Edit Your Profile'}</Text> */}
 
         <TouchableOpacity onPress={() => setIsModalProfile(true)}>
           <Image source={fileAvatar ? { uri: fileAvatar } :
-            require('../../assets/profile.png')}
+            require('../../assets/logo.png')}
             style={styles.logo}
           />
-          <Image source={
-            require('../../assets/upload.png')}
-            style={styles.upload}
-          />
+
         </TouchableOpacity>
 
+        <Text style={{color: '#555', marginTop: 12}}>Upload Your Profile Pic/Logo</Text>
+
         <View style={{ flexDirection: 'row', marginTop: 5 }}>
+
         </View>
       </View>
 
@@ -222,6 +222,16 @@ const EditProfileScreen = ({ navigation }) => {
             /> : <View></View>}
           </View>
 
+          <View style={styles.button}>
+            <TextInput style={{ color: '#fff', fontSize: 16 }}
+              placeholder={'Venue Name'}
+              placeholderTextColor={'#92959d'}
+              value={venue}
+              onChangeText={(e) => setVenue(e)}
+            />
+          </View>
+
+
           {/* <Text>number : {number}</Text>
               <Text>Formatted Value : {formattedValue}</Text>
               <Text>Formatted Value : {phoneCode}</Text> */}
@@ -248,16 +258,17 @@ const EditProfileScreen = ({ navigation }) => {
           </View>
 
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: !isEnabledSave ? 'rgba(233, 152, 193, 0.5)' : '#F9699A' }]}
+            style={[styles.button, { backgroundColor: !isEnabledSave ? 'rgba(233, 152, 193, 0.2)' : '#F9699A' }]}
             onPress={() => onSaveProfile()}
+            disabled={!isEnabledSave}
           >
-            <Text style={{ color: '#fff', fontSize: 16 }}>Finish</Text>
+            <Text style={{ color: !isEnabledSave ? '#333' : '#fff', fontSize: 16 }}>Finish</Text>
           </TouchableOpacity>
 
           <View>
-            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{marginTop: 30 }}>
+            {isEnabledSave && <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{marginTop: 30 }}>
               <Text style={{ color: '#bbb', textDecorationLine: 'underline' }}>Go Back</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>}
 
             <TouchableOpacity onPress={() => logoutUser()} style={{marginTop: 15 }}>
               <Text style={{ color: '#bbb', textDecorationLine: 'underline' }}>Log out</Text>
@@ -316,10 +327,11 @@ const styles = StyleSheet.create({
     marginTop: 40
   },
   logo: {
-    height: 180,
-    width: 180,
-    borderRadius: 90,
-    marginTop: 12
+    height: 160,
+    width: 160,
+    borderRadius: 80,
+    marginTop: 12,
+    opacity: 0.4
   },
   right: {
     flex: 1,

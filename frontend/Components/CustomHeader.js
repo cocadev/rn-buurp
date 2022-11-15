@@ -22,7 +22,7 @@ export default function CustomHeader({ title, hello }) {
       </View>
       <TouchableOpacity onPress={() => navigation.navigate('Home')}>
         <Image source={profilImage ? { uri: profilImage } :
-          require('../../assets/profile.png')}
+          require('../../assets/logo.png')}
           style={styles.logo}
         />
         <Text style={{ fontSize: 8, fontWeight: '700', color: '#999', textAlign: 'center' }}>{UtilService.truncate(walletAddress) || '-'}</Text>
